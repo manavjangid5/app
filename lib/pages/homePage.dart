@@ -88,6 +88,7 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.red[200],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
           ),
@@ -110,22 +111,12 @@ class _HomePageState extends State<HomePage> {
                     IconButton(
                       icon: const Icon(Icons.close),
                       onPressed: () {
-                        _saveChanges(editedLadle);
                         Navigator.of(context).pop();
                       },
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text('Ladle Details'),
-                TextFormField(
-                  initialValue: editedLadle.ladleLife.toString(),
-                  decoration: const InputDecoration(labelText: 'Ladle Life (hours)'),
-                  onChanged: (value) {
-                    editedLadle.ladleLife = int.tryParse(value) ?? editedLadle.ladleLife;
-                  },
-                ),
-                const SizedBox(height: 8),
                 LabelText(label: "Ladle Life:", value: "${editedLadle.ladleLife} hours"),
                 const SizedBox(height: 8),
                 LabelText(label: "Ladle Minutes:", value: "${editedLadle.ladleMinutes} minutes"),
@@ -252,111 +243,144 @@ class _HomePageState extends State<HomePage> {
     });
     _showMessage("Deleted Ladle ID: $ladleId");
   }
+
+
+  Future<void> _handleRefresh() async{
+    setState(() {
+      _foundLadles=ladles;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("LADLE INFORMATION"),
         backgroundColor: Colors.red,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: <Widget>[
-            // Search Bar for filtering ladles
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: SearchAnchor(
-                builder: (BuildContext context, SearchController controller) {
-                  return SearchBar(
-                    controller: controller,
-                    onChanged: (value) => _searchAction(value),
-                    padding: const MaterialStatePropertyAll<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 16.0),
-                    ),
-                    leading: const Icon(Icons.search),
-                  );
-                },
-                suggestionsBuilder: (BuildContext context, SearchController controller) {
-                  return List<ListTile>.generate(5, (int index) {
-                    final String item = 'item $index';
-                    return ListTile(
-                      title: Text(item),
-                      onTap: () {
-                        setState(() {
-                          controller.closeView(item);
-                        });
-                      },
-                    );
-                  });
-                },
-              ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                Navigator.of(context).pop();
+              });
+            },
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all<Color>(Colors.red.shade100), // Set background color
             ),
-            // Display list of ladles in a scrollable ListView
-            Expanded(
-              child: ListView.builder(
-                itemCount: _foundLadles.length,
-                itemBuilder: (context, index) {
-                  final detail = _foundLadles[index];
-                  return Card(
-                    key: ValueKey("ladle_id_${detail.ladleId}"),
-                    margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-                    color: Colors.red[200],
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              LabelText(
-                                label: "Ladle ID:",
-                                value: detail.ladleId.toString(),
-                              ),
-                              // PopupMenuButton added here
-                              PopupMenuButton<SampleItem>(
-                                initialValue: selectedItem,
-                                onSelected: (SampleItem item) {
-                                  setState(() {
-                                    selectedItem = item;
-                                  });
-
-                                  _handleSelectedAction(context, detail.ladleId);
-                                },
-                                itemBuilder: (BuildContext context) =>
-                                <PopupMenuEntry<SampleItem>>[
-                                  const PopupMenuItem<SampleItem>(
-                                    value: SampleItem.itemOne,
-                                    child: Text('View Details'),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.logout, color: Colors.black), // Adjust icon color to be distinct
+                SizedBox(width: 6), // Spacing between icon and text
+                Text("Logout", style: TextStyle(color: Colors.black)), // Adjust text color if needed
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: Container(
+        color: Colors.red[100],
+        child: RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: <Widget>[
+                // Search Bar for filtering ladles
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: SearchAnchor(
+                    builder: (BuildContext context, SearchController controller) {
+                      return SearchBar(
+                        controller: controller,
+                        onChanged: (value) => _searchAction(value),
+                        padding: const WidgetStatePropertyAll<EdgeInsets>(
+                          EdgeInsets.symmetric(horizontal: 16.0),
+                        ),
+                        leading: const Icon(Icons.search),
+                      );
+                    },
+                    suggestionsBuilder: (BuildContext context, SearchController controller) {
+                      return List<ListTile>.generate(5, (int index) {
+                        final String item = 'item $index';
+                        return ListTile(
+                          title: Text(item),
+                          onTap: () {
+                            setState(() {
+                              controller.closeView(item);
+                            });
+                          },
+                        );
+                      });
+                    },
+                  ),
+                ),
+                // Display list of ladles in a scrollable ListView
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _foundLadles.length,
+                    itemBuilder: (context, index) {
+                      final detail = _foundLadles[index];
+                      return Card(
+                        key: ValueKey("ladle_id_${detail.ladleId}"),
+                        margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+                        color: Colors.red[200],
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  LabelText(
+                                    label: "Ladle ID:",
+                                    value: detail.ladleId.toString(),
                                   ),
-                                  const PopupMenuItem<SampleItem>(
-                                    value: SampleItem.itemTwo,
-                                    child: Text('Update Ladle Info.'),
-                                  ),
-                                  const PopupMenuItem<SampleItem>(
-                                    value: SampleItem.itemThree,
-                                    child: Text('Delete Entry'),
+                                  // PopupMenuButton added here
+                                  PopupMenuButton<SampleItem>(
+                                    initialValue: selectedItem,
+                                    onSelected: (SampleItem item) {
+                                      setState(() {
+                                        selectedItem = item;
+                                      });
+          
+                                      _handleSelectedAction(context, detail.ladleId);
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<SampleItem>>[
+                                      const PopupMenuItem<SampleItem>(
+                                        value: SampleItem.itemOne,
+                                        child: Text('View Details'),
+                                      ),
+                                      const PopupMenuItem<SampleItem>(
+                                        value: SampleItem.itemTwo,
+                                        child: Text('Update Ladle Info.'),
+                                      ),
+                                      const PopupMenuItem<SampleItem>(
+                                        value: SampleItem.itemThree,
+                                        child: Text('Delete Entry'),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 8),
+                              LabelText(label: "Ladle Life:", value: "${detail.ladleLife} hours"),
+                              const SizedBox(height: 8),
+                              LabelText(label: "Ladle Minutes:", value: "${detail.ladleMinutes} minutes"),
+                              const SizedBox(height: 8),
+                              LabelText(label: "Relining Status:", value: detail.reliningStatus),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          LabelText(label: "Ladle Life:", value: "${detail.ladleLife} hours"),
-                          const SizedBox(height: 8),
-                          LabelText(label: "Ladle Minutes:", value: "${detail.ladleMinutes} minutes"),
-                          const SizedBox(height: 8),
-                          LabelText(label: "Relining Status:", value: detail.reliningStatus),
-                        ],
-                      ),
-
-                    ),
-                  );
-                },
-              ),
+          
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

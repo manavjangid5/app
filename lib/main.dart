@@ -20,22 +20,16 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  //double amnsIconSize = 50;
 
   final formKey= GlobalKey<FormState>();
   bool _isLoading=false;
-  void _login() async {
+
+  Future<String> _login() async {
     // if (formKey.currentState!.validate()) {
       String username = _usernameController.text;
       String password = _passwordController.text;
 
-      //print("Logging in with $username and $password");
-
       const String apiUrl = "http://172.18.23.160:1010/LDAP_API.asmx/Authenticate_Ldap";
-
-      //variableName = ;
-      // Use the input values as needed
-      // Login loginState = Login({username: username, password:password});
 
       setState(() {
         _isLoading = true;
@@ -43,7 +37,7 @@ class _HomeState extends State<Home> {
       try {
         final response = await http.post(
           Uri.parse(apiUrl),
-          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          headers: {"Content-Type": "multipart/form-data"},
           body:"Username=$username&Password=$password",
         );
 
@@ -63,31 +57,31 @@ class _HomeState extends State<Home> {
             print("Login Successful");
             final fullName=parts[1];
             final email= parts[2];
+            return status;
+
           }
-
-          //print("Login successful: $responseData");
-
           else {
             _showError("Invalid Username or Password");
+            return "Invalid Username or Password";
           }
-          // variableName = ;
         }
-
         else
         {
-          _showError("Login faied with stauts: ${response.statusCode}");
+          print("Login failed with status: ${response.statusCode}");
+          _showError("Login failed with status: ${response.statusCode}");
+          return response.toString();
         }
       }
-
-
       catch (error) {
         setState(() {
           _isLoading=false;
         });
-        _showError("An error occured : $error");
+        print("An error occurred : $error");
+        _showError("An error occurred : $error");
+        return error.toString();
       }
-
   }
+
   void _showError(String message)
   {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message),
@@ -179,15 +173,28 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             String username = _usernameController.text;
 
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => HomePage(username: username),
-                              ),
-                            );
+                            // Navigator.push(context, MaterialPageRoute(
+                            //     builder: (context) => HomePage(username: username),
+                            //   ),
+                            // );
                             if (formKey.currentState!.validate()) {
-                              // _login();
+                              String response = await _login();
+                              if(response  == "True"){
+                                Navigator.of(context).pop();
+                                Navigator
+                                    .of(context)
+                                    .pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => HomePage(username: username),
+                                    )
+                                );
+                              }
+                              else{
+                                print("Some Error Occurred $response");
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
