@@ -176,26 +176,26 @@ class _HomeState extends State<Home> {
                           onPressed: () async {
                             String username = _usernameController.text;
 
-                            // Navigator.push(context, MaterialPageRoute(
-                            //     builder: (context) => HomePage(username: username),
-                            //   ),
-                            // );
-                            if (formKey.currentState!.validate()) {
-                              String response = await _login();
-                              if(response  == "True"){
-                                Navigator.of(context).pop();
-                                Navigator
-                                    .of(context)
-                                    .pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => HomePage(username: username),
-                                    )
-                                );
-                              }
-                              else{
-                                print("Some Error Occurred $response");
-                              }
-                            }
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => HomePage(username: username),
+                              ),
+                            );
+                            // if (formKey.currentState!.validate()) {
+                            //   String response = await _login();
+                            //   if(response  == "True"){
+                            //     Navigator.of(context).pop();
+                            //     Navigator
+                            //         .of(context)
+                            //         .pushReplacement(
+                            //         MaterialPageRoute(
+                            //           builder: (context) => HomePage(username: username),
+                            //         )
+                            //     );
+                            //   }
+                            //   else{
+                            //     print("Some Error Occurred $response");
+                            //   }
+                            // }
                           },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.black,
