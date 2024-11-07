@@ -15,6 +15,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+
+  final TextEditingController ladleDropdownController = TextEditingController();
+  String? selectedLadleId;
   SampleItem? selectedItem;
   final formKey= GlobalKey<FormState>();
 
@@ -35,6 +38,9 @@ class _HomePageState extends State<HomePage> {
     Ladle(ladleId: 9, ladleLife: 1400, ladleMinutes: 380, reliningStatus: "In Progress"),
     Ladle(ladleId: 10, ladleLife: 1000, ladleMinutes: 275, reliningStatus: "Pending"),
   ];
+
+  Set<String> ladlesDropdown={};
+
   
   List<Ladle> _foundLadles=[];
   
@@ -42,6 +48,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     _foundLadles=ladles;
+    for(Ladle obj in ladles)
+      {
+        ladlesDropdown.add(obj.ladleId.toString());
+      }
     super.initState();
   }
   void _searchAction(String enteredString)
@@ -50,7 +60,6 @@ class _HomePageState extends State<HomePage> {
     if(enteredString.isNotEmpty){
       tempLadles=ladles.where((ladle) => ladle.ladleId.toString().toLowerCase().contains(enteredString.toLowerCase())
       || ladle.reliningStatus.toLowerCase().contains(enteredString.toLowerCase())).toList();
-
     }
     else{
       tempLadles=ladles;
@@ -318,26 +327,28 @@ class _HomePageState extends State<HomePage> {
                   //     });
                   //   },
                   // ),
-                  child:Center(
-                      child: DropdownButton<String>(
-                        value: _selectedFruit, // Currently selected item
-                        hint: Text('Select a fruit'), // Hint when no value is selected
-                        icon: Icon(Icons.arrow_drop_down), // Icon for dropdown
-                        dropdownColor: Colors.lightBlue[50], // Background color of dropdown
-                        isExpanded: true, // Expand to fit parent width
-                        style: TextStyle(color: Colors.blue, fontSize: 18), // Text style
-                        items: _fruits.map((String fruit) {
-                          return DropdownMenuItem<String>(
-                            value: fruit,
-                            child: Text(fruit),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedFruit = newValue; // Update the selected item
-                          });
-                        },
-                      ),
+                  child:SizedBox(
+                    child: DropdownMenu<String>(
+                      initialSelection: ladlesDropdown.first,
+                      controller: ladleDropdownController,
+                      // requestFocusOnTap is enabled/disabled by platforms when it is null.
+                      // On mobile platforms, this is false by default. Setting this to true will
+                      // trigger focus request on the text field and virtual keyboard will appear
+                      // afterward. On desktop platforms however, this defaults to true.
+                      requestFocusOnTap: true,
+                      label: const Text('Ladle Id'),
+                      onSelected: ((value) => _searchAction(value!)),
+                      dropdownMenuEntries: ladlesDropdown.toList().map<DropdownMenuEntry<String>>((String ladleId) {
+                        return DropdownMenuEntry<String>(
+                          value: ladleId,
+                          label: ladleId,
+                          style: MenuItemButton.styleFrom(
+                            foregroundColor: Colors.black,
+
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   )
                 ),
                 // Display list of ladles in a scrollable ListView
