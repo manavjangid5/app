@@ -18,6 +18,11 @@ class _HomePageState extends State<HomePage> {
   SampleItem? selectedItem;
   final formKey= GlobalKey<FormState>();
 
+  String? _selectedFruit;
+
+  // List of dropdown menu items
+  final List<String> _fruits = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
+
   List<Ladle> ladles = [
     Ladle(ladleId: 1, ladleLife: 1200, ladleMinutes: 300, reliningStatus: "Pending"),
     Ladle(ladleId: 2, ladleLife: 1500, ladleMinutes: 400, reliningStatus: "Completed"),
@@ -288,31 +293,52 @@ class _HomePageState extends State<HomePage> {
                 // Search Bar for filtering ladles
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: SearchAnchor(
-                    builder: (BuildContext context, SearchController controller) {
-                      return SearchBar(
-                        controller: controller,
-                        onChanged: (value) => _searchAction(value),
-                        padding: const WidgetStatePropertyAll<EdgeInsets>(
-                          EdgeInsets.symmetric(horizontal: 16.0),
-                        ),
-                        leading: const Icon(Icons.search),
-                      );
-                    },
-                    suggestionsBuilder: (BuildContext context, SearchController controller) {
-                      return List<ListTile>.generate(5, (int index) {
-                        final String item = 'item $index';
-                        return ListTile(
-                          title: Text(item),
-                          onTap: () {
-                            setState(() {
-                              controller.closeView(item);
-                            });
-                          },
-                        );
-                      });
-                    },
-                  ),
+                  // child: SearchAnchor(
+                  //   builder: (BuildContext context, SearchController controller) {
+                  //     return SearchBar(
+                  //       controller: controller,
+                  //       onChanged: (value) => _searchAction(value),
+                  //       padding: const WidgetStatePropertyAll<EdgeInsets>(
+                  //         EdgeInsets.symmetric(horizontal: 16.0),
+                  //       ),
+                  //       leading: const Icon(Icons.search),
+                  //     );
+                  //   },
+                  //   suggestionsBuilder: (BuildContext context, SearchController controller) {
+                  //     return List<ListTile>.generate(5, (int index) {
+                  //       final String item = 'item $index';
+                  //       return ListTile(
+                  //         title: Text(item),
+                  //         onTap: () {
+                  //           setState(() {
+                  //             controller.closeView(item);
+                  //           });
+                  //         },
+                  //       );
+                  //     });
+                  //   },
+                  // ),
+                  child:Center(
+                      child: DropdownButton<String>(
+                        value: _selectedFruit, // Currently selected item
+                        hint: Text('Select a fruit'), // Hint when no value is selected
+                        icon: Icon(Icons.arrow_drop_down), // Icon for dropdown
+                        dropdownColor: Colors.lightBlue[50], // Background color of dropdown
+                        isExpanded: true, // Expand to fit parent width
+                        style: TextStyle(color: Colors.blue, fontSize: 18), // Text style
+                        items: _fruits.map((String fruit) {
+                          return DropdownMenuItem<String>(
+                            value: fruit,
+                            child: Text(fruit),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedFruit = newValue; // Update the selected item
+                          });
+                        },
+                      ),
+                  )
                 ),
                 // Display list of ladles in a scrollable ListView
                 Expanded(
@@ -382,6 +408,32 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.live_tv),
+            label: 'Overview',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: 0,
+        // onTap: (){},
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.red,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.black,
+        selectedFontSize: 16,
+        unselectedFontSize: 14,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
       ),
     );
   }
