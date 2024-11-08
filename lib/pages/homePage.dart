@@ -327,29 +327,58 @@ class _HomePageState extends State<HomePage> {
                   //     });
                   //   },
                   // ),
-                  child:SizedBox(
-                    child: DropdownMenu<String>(
-                      initialSelection: ladlesDropdown.first,
-                      controller: ladleDropdownController,
-                      // requestFocusOnTap is enabled/disabled by platforms when it is null.
-                      // On mobile platforms, this is false by default. Setting this to true will
-                      // trigger focus request on the text field and virtual keyboard will appear
-                      // afterward. On desktop platforms however, this defaults to true.
-                      requestFocusOnTap: true,
-                      label: const Text('Ladle Id'),
-                      onSelected: ((value) => _searchAction(value!)),
-                      dropdownMenuEntries: ladlesDropdown.toList().map<DropdownMenuEntry<String>>((String ladleId) {
-                        return DropdownMenuEntry<String>(
-                          value: ladleId,
-                          label: ladleId,
-                          style: MenuItemButton.styleFrom(
-                            foregroundColor: Colors.black,
+                  child:Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      DropdownMenu<String>(
 
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  )
+                        controller: ladleDropdownController,
+                        requestFocusOnTap: true,
+                        label: const Text('Ladle Id'),
+                        onSelected: (value) => _searchAction(value!),
+
+                        dropdownMenuEntries: ladlesDropdown.toList().map<DropdownMenuEntry<String>>((String ladleId) {
+                          return DropdownMenuEntry<String>(
+                            value: ladleId,
+                            label: ladleId,
+                            style: MenuItemButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0), // Add padding
+                              backgroundColor: Colors.white, // Background color for menu items
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                              ),
+                            ),
+                          );
+                        }).toList(),
+
+                      ),
+                      SizedBox(width: 24),
+                      DropdownMenu<String>(
+
+                        controller: ladleDropdownController,
+                        requestFocusOnTap: true,
+                        label: const Text('Ladle Id'),
+                        onSelected: (value) => _searchAction(value!),
+
+                        dropdownMenuEntries: ladlesDropdown.toList().map<DropdownMenuEntry<String>>((String ladleId) {
+                          return DropdownMenuEntry<String>(
+                            value: ladleId,
+                            label: ladleId,
+                            style: MenuItemButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0), // Add padding
+                              backgroundColor: Colors.white, // Background color for menu items
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                              ),
+                            ),
+                          );
+                        }).toList(),
+
+                      ),
+                    ],
+                  ),
                 ),
                 // Display list of ladles in a scrollable ListView
                 Expanded(
