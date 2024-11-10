@@ -15,16 +15,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-
-  final TextEditingController ladleDropdownController = TextEditingController();
-  String? selectedLadleId;
-  SampleItem? selectedItem;
   final formKey= GlobalKey<FormState>();
 
-  String? _selectedFruit;
+  final TextEditingController optionController = TextEditingController();
+  final TextEditingController selectedOptionController = TextEditingController();
 
-  // List of dropdown menu items
-  final List<String> _fruits = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
+  String? selectedLadleId;
+  String? optionSelected="Ladle Id";
+  SampleItem? selectedItem;
+
 
   List<Ladle> ladles = [
     Ladle(ladleId: 1, ladleLife: 1200, ladleMinutes: 300, reliningStatus: "Pending"),
@@ -40,8 +39,8 @@ class _HomePageState extends State<HomePage> {
   ];
 
   Set<String> ladlesDropdown={};
-
-  
+  Set<String> reliningStatusDropdown={};
+  Set<String> optionsDropdown={"Ladle Id", "Relining Status"};
   List<Ladle> _foundLadles=[];
   
   @override
@@ -49,9 +48,10 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     _foundLadles=ladles;
     for(Ladle obj in ladles)
-      {
-        ladlesDropdown.add(obj.ladleId.toString());
-      }
+    {
+      ladlesDropdown.add(obj.ladleId.toString());
+      reliningStatusDropdown.add(obj.reliningStatus.toString());
+    }
     super.initState();
   }
   void _searchAction(String enteredString)
@@ -254,6 +254,7 @@ class _HomePageState extends State<HomePage> {
   {
     setState(() {
       ladles.removeWhere((item) => item.ladleId == ladleId);
+      _foundLadles = List.from(ladles);
     });
     _showMessage("Deleted Ladle ID: $ladleId");
   }
@@ -300,8 +301,8 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: <Widget>[
                 // Search Bar for filtering ladles
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                SizedBox(
+                  width: double.infinity,
                   // child: SearchAnchor(
                   //   builder: (BuildContext context, SearchController controller) {
                   //     return SearchBar(
@@ -327,58 +328,58 @@ class _HomePageState extends State<HomePage> {
                   //     });
                   //   },
                   // ),
-                  child:Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       DropdownMenu<String>(
-
-                        controller: ladleDropdownController,
+                        controller: optionController,
                         requestFocusOnTap: true,
-                        label: const Text('Ladle Id'),
-                        onSelected: (value) => _searchAction(value!),
-
-                        dropdownMenuEntries: ladlesDropdown.toList().map<DropdownMenuEntry<String>>((String ladleId) {
+                        label: const Text('Select Option For search'),
+                        onSelected: (value) {
+                          setState(() {
+                            optionSelected = value;
+                            selectedOptionController.clear(); // Clear the second dropdown selection
+                          });
+                        },
+                        dropdownMenuEntries: optionsDropdown.toList().map<DropdownMenuEntry<String>>((String option) {
                           return DropdownMenuEntry<String>(
-                            value: ladleId,
-                            label: ladleId,
+                            value: option,
+                            label: option,
                             style: MenuItemButton.styleFrom(
                               foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0), // Add padding
-                              backgroundColor: Colors.white, // Background color for menu items
+                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                              backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
                           );
                         }).toList(),
-
                       ),
-                      SizedBox(width: 24),
+                      const SizedBox(width: 24),
                       DropdownMenu<String>(
-
-                        controller: ladleDropdownController,
+                        controller: selectedOptionController,
                         requestFocusOnTap: true,
-                        label: const Text('Ladle Id'),
+                        label: Text(optionSelected ?? 'Select Option'), // Use a default label if optionSelected is null
                         onSelected: (value) => _searchAction(value!),
-
-                        dropdownMenuEntries: ladlesDropdown.toList().map<DropdownMenuEntry<String>>((String ladleId) {
+                        dropdownMenuEntries: (optionSelected == "Ladle Id" ? ladlesDropdown : reliningStatusDropdown).toList().map<DropdownMenuEntry<String>>((String val) {
                           return DropdownMenuEntry<String>(
-                            value: ladleId,
-                            label: ladleId,
+                            value: val,
+                            label: val,
                             style: MenuItemButton.styleFrom(
                               foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0), // Add padding
-                              backgroundColor: Colors.white, // Background color for menu items
+                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                              backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
                           );
                         }).toList(),
-
                       ),
                     ],
                   ),
+
                 ),
                 // Display list of ladles in a scrollable ListView
                 Expanded(
@@ -409,7 +410,6 @@ class _HomePageState extends State<HomePage> {
                                       setState(() {
                                         selectedItem = item;
                                       });
-          
                                       _handleSelectedAction(context, detail.ladleId);
                                     },
                                     itemBuilder: (BuildContext context) =>
