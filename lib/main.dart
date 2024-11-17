@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart';
-
-import '../pages/homePage.dart';
+import '../pages/home.dart';
+import '../pages/ladleInfo.dart';
 import 'dart:convert';
 
 void main() => runApp(const MaterialApp(
-  home: Home(),
+  home: Main(),
   debugShowCheckedModeBanner: false,
 ));
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Main extends StatefulWidget {
+  const Main({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Main> createState() => _MainState();
 }
 
-class _HomeState extends State<Home> {
+class   _MainState extends State<Main> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -103,11 +103,11 @@ class _HomeState extends State<Home> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    // const Image(
-                    //   image: AssetImage('assets/AMNS_Logo_Small.jpg'),
-                    //   width: 70,
-                    //   height: 60,
-                    // ),
+                    const Image(
+                      image: AssetImage('lib/images/AMNS_Logo_Mid.jpg'),
+                      width: 70,
+                      height: 60,
+                    ),
                     Container(
                       width: double.infinity,
                       alignment: Alignment.center,
@@ -177,7 +177,7 @@ class _HomeState extends State<Home> {
                             String username = _usernameController.text;
 
                             Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => HomePage(username: username),
+                                builder: (context) => Home(username: username),
                               ),
                             );
                             // if (formKey.currentState!.validate()) {
