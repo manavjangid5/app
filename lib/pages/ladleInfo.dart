@@ -118,7 +118,6 @@ class _LadleInfoState extends State<LadleInfo> {
       {
         if(ladle.ladleNo==editedLadle.ladleNo) {
           ladle=editedLadle;
-          print(ladle);
         }
       }
     });
@@ -225,8 +224,8 @@ class _LadleInfoState extends State<LadleInfo> {
       }
     }
 
-    String valueForLadleStatus=editedLadle.ladleStatus;
-    String valueForPlugType=editedLadle.plugType;
+    String? valueForLadleStatus=editedLadle.ladleStatus;
+    String? valueForPlugType=editedLadle.plugType;
 
     showDialog(
       context: context,
@@ -288,20 +287,29 @@ class _LadleInfoState extends State<LadleInfo> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        DropdownButton<String>(
-                          value: valueForLadleStatus,
-                          onChanged: (String? value) {
-                            setState(() {
-                              editedLadle = editedLadle.copyWith(ladleStatus: value);
-                              valueForLadleStatus=value!;
-                            });
-                          },
-                          items: ladleStatusItems.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                        Expanded(
+                          child: DropdownMenu<String>(
+                            initialSelection: valueForLadleStatus,
+                            dropdownMenuEntries: ladleStatusItems.map((String item) {
+                              return DropdownMenuEntry<String>(
+                                value: item,
+                                label: item,
+                              );
+                            }).toList(),
+                            onSelected: (String? value) {
+                              setState(() {
+                                valueForLadleStatus = value;
+                                editedLadle = editedLadle.copyWith(ladleStatus: value);
+                              });
+                            },
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                            inputDecorationTheme: const InputDecorationTheme(
+                              contentPadding: EdgeInsets.all(2),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -324,20 +332,29 @@ class _LadleInfoState extends State<LadleInfo> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        DropdownButton<String>(
-                          value: valueForPlugType,
-                          onChanged: (value) {
-                            setState(() {
-                              editedLadle = editedLadle.copyWith(plugType: value);
-                              valueForPlugType=value!;
-                            });
-                          },
-                          items: ["Mini Jumbo", "Jumbo"].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                        Expanded(
+                          child: DropdownMenu<String>(
+                            initialSelection: valueForPlugType,
+                            dropdownMenuEntries: ["Mini Jumbo","Jumbo"].map((String item) {
+                              return DropdownMenuEntry<String>(
+                                value: item,
+                                label: item,
+                              );
+                            }).toList(),
+                            onSelected: (String? value) {
+                              setState(() {
+                                valueForLadleStatus = value;
+                                editedLadle = editedLadle.copyWith(plugType: value);
+                              });
+                            },
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                            inputDecorationTheme: const InputDecorationTheme(
+                              contentPadding: EdgeInsets.all(2),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -490,7 +507,7 @@ class _LadleInfoState extends State<LadleInfo> {
                           DropdownMenu<String>(
                             controller: selectedOptionController,
                             requestFocusOnTap: true,
-                            label: Text(optionSelected                                                                                                   !),
+                            label: Text(optionSelected!),
                             onSelected: (value) => _searchAction(value!),
                             dropdownMenuEntries: (optionSelected == "Ladle Id"
                                 ? ladlesDropdown
@@ -513,7 +530,6 @@ class _LadleInfoState extends State<LadleInfo> {
                     ),
                   ),
                 ),
-                // Display list of ladles in a scrollable ListView
                 Expanded(
                   child: ListView.builder(
                     itemCount: _foundLadles.length,
@@ -522,7 +538,7 @@ class _LadleInfoState extends State<LadleInfo> {
                       return Card(
                         key: ValueKey("ladle_id_${detail.ladleNo}"),
                         margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-                        color: Colors.red[200],
+                        color: Colors.red[100],
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Column(
@@ -570,7 +586,7 @@ class _LadleInfoState extends State<LadleInfo> {
                               LabelText(label: "Ladle Status:", value: detail.ladleStatus),
                             ],
                           ),
-          
+
                         ),
                       );
                     },

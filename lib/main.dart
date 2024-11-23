@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:xml/xml.dart';
 import '../pages/home.dart';
-import '../pages/ladleInfo.dart';
-import 'dart:convert';
+import 'api.dart';
+// import 'package:mssql_connection/mssql_connection.dart';
 
 void main() => runApp(const MaterialApp(
   home: Main(),
   debugShowCheckedModeBanner: false,
 ));
+
 
 class Main extends StatefulWidget {
   const Main({super.key});
@@ -22,64 +22,26 @@ class   _MainState extends State<Main> {
   final _passwordController = TextEditingController();
 
   final formKey= GlobalKey<FormState>();
-  bool _isLoading=false;
+  // bool _isLoading=false;
 
-  Future<String> _login() async {
+  Future<Map<String,dynamic>> _login() async {
     // if (formKey.currentState!.validate()) {
+    // MssqlConnection mssqlConnection = MssqlConnection.getInstance();
+    // bool isConnected = await mssqlConnection.connect(
+    //   ip: '160.0.0.3',
+    //   port: '90',
+    //   databaseName: 'SMPDATA',
+    //   username: 'sa',
+    //   password: 'vectra',
+    //   timeoutInSeconds: 15,
+    // );
+    // print("print the connection $isConnected.toString()");
       String username = _usernameController.text;
       String password = _passwordController.text;
 
-      const String apiUrl = "http://172.18.23.160:1010/LDAP_API.asmx/Authenticate_Ldap";
+      Map<String,dynamic> response=await Api.loginUser(username, password);
 
-      setState(() {
-        _isLoading = true;
-      });
-      try {
-        final response = await http.post(
-          Uri.parse(apiUrl),
-          headers: {"Content-Type": "multipart/form-data"},
-          body:"Username=$username&Password=$password",
-        );
-
-        setState(() {
-          _isLoading= false;
-        });
-
-        if (response.statusCode == 200) {
-          final document =XmlDocument.parse(response.body);
-          final resultString =document.findAllElements('string').first.text;
-          //final responseData = jsonDecode(response.body);
-
-          final parts = resultString.split('|');
-          final status=parts[0];
-
-          if (status == "True") {
-            print("Login Successful");
-            final fullName=parts[1];
-            final email= parts[2];
-            return status;
-
-          }
-          else {
-            _showError("Invalid Username or Password");
-            return "Invalid Username or Password";
-          }
-        }
-        else
-        {
-          print("Login failed with status: ${response.statusCode}");
-          _showError("Login failed with status: ${response.statusCode}");
-          return response.toString();
-        }
-      }
-      catch (error) {
-        setState(() {
-          _isLoading=false;
-        });
-        print("An error occurred : $error");
-        _showError("An error occurred : $error");
-        return error.toString();
-      }
+      return response;
   }
 
   void _showError(String message)
@@ -181,18 +143,19 @@ class   _MainState extends State<Main> {
                               ),
                             );
                             // if (formKey.currentState!.validate()) {
-                            //   String response = await _login();
-                            //   if(response  == "True"){
-                            //     Navigator.of(context).pop();
-                            //     Navigator
-                            //         .of(context)
-                            //         .pushReplacement(
-                            //         MaterialPageRoute(
-                            //           builder: (context) => HomePage(username: username),
-                            //         )
+                            //   Map<String, dynamic> response = await _login();
+                            //   print("---------------------------------------------");
+                            //   print(response.runtimeType);
+                            //   print(response);
+                            //
+                            //   if (response["success"] == true) {
+                            //     Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //         builder: (context) => Home(username: username),
+                            //       ),
                             //     );
-                            //   }
-                            //   else{
+                            //   } else {
                             //     print("Some Error Occurred $response");
                             //   }
                             // }
