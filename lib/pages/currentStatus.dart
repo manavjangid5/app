@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:project1/components/appBar.dart";
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class CurrentStatusPage extends StatefulWidget {
   final String username;
@@ -11,172 +11,159 @@ class CurrentStatusPage extends StatefulWidget {
 }
 
 class _CurrentStatusPageState extends State<CurrentStatusPage> {
+
+  final List<Map<String, dynamic>> containerData = [
+    {
+      "title": "Mobile App Design",
+      "icon": Icons.phone_android,
+      "itemList": ["Wireframes", "UI Design", "UX Review"]
+    },
+    {
+      "title": "Pending",
+      "icon": Icons.pending,
+      "itemList": ["Task 1", "Task 2", "Task 3", "Task 4", "Task 5", "Task 6"]
+    },
+    {
+      "title": "Website Design",
+      "icon": Icons.web,
+      "itemList": ["HTML Setup", "CSS Styling", "JavaScript Logic"]
+    },
+    {
+      "title": "Illustration",
+      "icon": Icons.brush,
+      "itemList": ["Sketch Ideas", "Digital Art", "Coloring"]
+    },
+    {
+      "title": "Testing",
+      "icon": Icons.bug_report,
+      "itemList": ["Unit Tests", "Integration Tests", "Bug Fixing","Unit Tests", "Integration Tests", "Bug Fixing"]
+    },
+    {
+      "title": "Illustration",
+      "icon": Icons.brush,
+      "itemList": ["Sketch Ideas", "Digital Art", "Coloring"]
+    },
+    {
+      "title": "Illustration",
+      "icon": Icons.brush,
+      "itemList": ["Sketch Ideas", "Digital Art", "Coloring"]
+    },
+    {
+      "title": "Illustration",
+      "icon": Icons.brush,
+      "itemList": ["Sketch Ideas", "Digital Art", "Coloring"]
+    },
+    {
+      "title": "Pending",
+      "icon": Icons.pending,
+      "itemList": ["Task 1", "Task 2", "Task 3", "Task 4", "Task 5", "Task 6"]
+    },
+    {
+      "title": "Website Design",
+      "icon": Icons.web,
+      "itemList": ["HTML Setup", "CSS Styling", "JavaScript Logic"]
+    },
+    {
+      "title": "Illustration",
+      "icon": Icons.brush,
+      "itemList": ["Sketch Ideas", "Digital Art", "Coloring"]
+    },
+    {
+      "title": "Testing",
+      "icon": Icons.bug_report,
+      "itemList": ["Unit Tests", "Integration Tests", "Bug Fixing","Unit Tests", "Integration Tests", "Bug Fixing"]
+    },
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            body: CustomScrollView(
-              primary: false,
-              slivers: <Widget>[
-                SliverPadding(
-                  padding: const EdgeInsets.all(20),
-                  sliver: SliverGrid.count(
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 1,
-                    children: <Widget>[
-                      Card(
-                        // Styling the card
-                        color: Colors.red[100],
-                        elevation: 4,
-                        shadowColor: Colors.grey[400],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
+      body: MasonryGridView.builder(
+        gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Number of columns
+        ),
+        mainAxisSpacing: 16, // Vertical spacing between items
+        crossAxisSpacing: 16, // Horizontal spacing between items
+        itemCount: containerData.length,
+        padding: const EdgeInsets.all(8),
+        itemBuilder: (context, index) {
+          final data = containerData[index];
+          return customContainer(
+            context,
+            data["itemList"] as List<String>,
+            data["icon"] as IconData,
+            data["title"] as String,
+          );
+        },
+      ),
 
-                        // Card content
-                        child: Padding(
-                          padding: const EdgeInsets.all(12), // Padding inside the card
-                          child: IntrinsicHeight( // Ensures the card height matches its content
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Image on the left
-                                const Image(
-                                  image: AssetImage('lib/images/AMNS_Logo_Mid.jpg'),
-                                  width: 100,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                ),
-                                const SizedBox(width: 12), // Space between image and text
-
-                                Container(
-                                  width: 1,
-                                  color: Colors.grey,
-                                  margin: const EdgeInsets.symmetric(vertical: double.minPositive),
-                                ),
-                                // Text content on the right
-                                const SizedBox(width: 12),
-
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min, // Adjust to content height
-                                    children: [
-                                      // Title
-                                      const Center(
-                                        child: Text(
-                                          "Castor 1",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Container(
-                                        height: 1,
-                                        color: Colors.grey,
-                                        margin: const EdgeInsets.symmetric(horizontal: double.minPositive),
-                                      ),
-                                      const SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text("string 1"),
-                                            SizedBox(height: 8),
-                                            Text("string 12"),
-                                            SizedBox(height: 8),
-                                            Text("string 21"),
-                                            SizedBox(height: 8),
-                                            Text("string 122"),
-                                            SizedBox(height: 8),
-                                          ],
-                                        )
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Card(
-                        // Define the shape of the card
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-
-                        // Define how the card's content should be clipped
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        // Define the child widget of the card
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            // Add padding around the row widget
-                            Padding(
-                              padding: const EdgeInsets.all(15),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  // Add an image widget to display an image
-                                  const Image(
-                                    image: AssetImage('lib/images/AMNS_Logo_Mid.jpg'),
-                                    width: 70,
-                                    height: 60,
-                                  ),
-                                  // Add some spacing between the image and the text
-                                  Container(width: 20),
-                                  // Add an expanded widget to take up the remaining horizontal space
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        // Add some spacing between the top of the card and the title
-                                        Container(height: 5),
-                                        // Add a title widget
-                                        const Text(
-                                          "Cards Title 1",
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        // Add some spacing between the title and the subtitle
-                                        Container(height: 5),
-                                        // Add a subtitle widget
-                                        const Text(
-                                          "Cards Title 1",
-                                          style: TextStyle(
-                                            color: Colors.blueGrey,
-                                          ),
-                                        ),
-                                        // Add some spacing between the subtitle and the text
-                                        Container(height: 10),
-                                        // Add a text widget to display some text
-                                        Text(
-                                          "MyStringsSample.card_text",
-                                          maxLines: 2,
-                                          style: TextStyle(
-                                            color: Colors.grey[700],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )
+      // body: SingleChildScrollView(
+      //   child: Center(
+      //     child: Padding(
+      //       padding: const EdgeInsets.all(6.0),
+      //       child: Wrap(
+      //         // delegate: DynamicFlowDelegate(
+      //         //   spacing: 8,
+      //         // ),
+      //         spacing: 8.0,
+      //         runSpacing: 10.0,
+      //         children: containerData.map((data) {
+      //           return SizedBox(
+      //             width: MediaQuery.of(context).size.width * 0.45, // Limit width to 45% of the screen
+      //             child: customContainer(
+      //               context,
+      //               data["itemList"] as List<String>,
+      //               data["icon"] as IconData,
+      //               data["title"] as String,
+      //             ),
+      //           );
+      //         }).toList(),
+      //       ),
+      //     ),
+      //   ),
+      // ),
     );
   }
 }
+
+Widget customContainer(
+    BuildContext context, List<String> itemList, IconData iconRequired, String titleRequired) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(16),
+      gradient: const LinearGradient(
+        colors: [Colors.red, Colors.white],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 4,
+          offset: const Offset(2, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(iconRequired, size: 40),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                titleRequired,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ...itemList.map((item) => Text(item)).toList(),
+      ],
+    ),
+  );
+}
+// list, icon, title,
